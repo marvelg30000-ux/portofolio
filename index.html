@@ -1,0 +1,228 @@
+
+// Custom Cursor
+const cursor = document.querySelector('.cursor');
+
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.pageX + 'px';
+    cursor.style.top = e.pageY + 'px';
+});
+
+// Add hover effect to links and buttons
+const hoverElements = document.querySelectorAll('a, button, .cta-button, .project-card, .filter-btn, .nav-links a');
+
+hoverElements.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursor.classList.add('hovered');
+    });
+    
+    el.addEventListener('mouseleave', () => {
+        cursor.classList.remove('hovered');
+    });
+});
+
+// Mobile Navigation Toggle
+const burger = document.querySelector('.burger');
+const nav = document.querySelector('.left-nav');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+burger.addEventListener('click', () => {
+    nav.classList.toggle('nav-active');
+    burger.classList.toggle('toggle');
+});
+
+// Close mobile nav when clicking on a link
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        nav.classList.remove('nav-active');
+        burger.classList.remove('toggle');
+    });
+});
+
+// Smooth Scrolling for Navigation Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Active Navigation Link on Scroll
+const sections = document.querySelectorAll('.section');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        
+        if (pageYOffset >= (sectionTop - 200)) {
+            current = section.getAttribute('id');
+        }
+    });
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Project Filtering
+const filterButtons = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.project-card');
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        const filterValue = button.getAttribute('data-filter');
+        
+        projectCards.forEach(card => {
+            if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Animate Skill Bars on Scroll
+const skillBars = document.querySelectorAll('.skill-level');
+
+function animateSkillBars() {
+    skillBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 300);
+    });
+}
+
+// Animate Experience Cards on Scroll
+const experienceCards = document.querySelectorAll('.experience-card');
+
+function animateExperienceCards() {
+    experienceCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+}
+
+// Use Intersection Observer to animate experience when in view
+const experienceSection = document.querySelector('.experience');
+const experienceObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateExperienceCards();
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+if (experienceSection) {
+    experienceObserver.observe(experienceSection);
+}
+
+// Animate Service Cards on Scroll
+const serviceCards = document.querySelectorAll('.service-card');
+
+function animateServiceCards() {
+    serviceCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+}
+
+// Use Intersection Observer to animate services when in view
+const servicesSection = document.querySelector('.services');
+const servicesObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateServiceCards();
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+if (servicesSection) {
+    servicesObserver.observe(servicesSection);
+}
+
+// Use Intersection Observer to animate skills when in view
+const skillsSection = document.querySelector('.skills');
+const observerOptions = {
+    root: null,
+    threshold: 0.3,
+    rootMargin: '0px'
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateSkillBars();
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+if (skillsSection) {
+    observer.observe(skillsSection);
+}
+
+// Form Submission Handling
+const contactForm = document.querySelector('.contact-form');
+
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Here you would typically send the form data to a server
+        // For now, we'll just show an alert
+        alert('Thank you for your message! I will get back to you soon.');
+        contactForm.reset();
+    });
+}
+
+// Initialize animations when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Animate hero elements
+    const heroElements = document.querySelectorAll('.hero-title, .hero-subtitle, .hero-text, .hero-buttons');
+    
+    heroElements.forEach((el, index) => {
+        el.style.animationDelay = `${0.5 + (index * 0.2)}s`;
+    });
+    
+    // Initialize skill bars with their widths
+    setTimeout(animateSkillBars, 1000);
+});
